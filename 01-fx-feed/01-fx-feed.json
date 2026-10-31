@@ -1,0 +1,258 @@
+{
+  "name": "Daily FX Feed",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bf33a63b-6725-4cbc-b6bc-d4eed369c1fe",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.frankfurter.app/latest?from=USD&to=MYR,IDR,SGD",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f5816497-ad9f-4e36-bb8e-5384f007dd51",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "be142e1a-143a-41bd-ad0b-dc3e54be48bf",
+              "name": "date",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "41a25539-5529-4497-bfeb-3555d8b192e6",
+              "name": "base",
+              "value": "={{ $json.base }}",
+              "type": "string"
+            },
+            {
+              "id": "f83ae50d-1f29-48ae-95ec-7a6cc017bfe5",
+              "name": "rates.IDR",
+              "value": "={{ $json.rates.IDR }}",
+              "type": "number"
+            },
+            {
+              "id": "573542eb-358d-4524-b86b-493bae24174a",
+              "name": "rates.MYR",
+              "value": "={{ $json.rates.MYR }}",
+              "type": "number"
+            },
+            {
+              "id": "51e66fc0-093c-4666-a6d4-fc10cbb3ebc5",
+              "name": "rates.SGD",
+              "value": "={{ $json.rates.SGD }}",
+              "type": "number"
+            },
+            {
+              "id": "79a38f83-25c8-4b0b-9967-5f77e11ed393",
+              "name": "logged_at",
+              "value": "={{ $now.toISO()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "924ad509-f294-4a3d-938f-df8333f3b23d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Oijh3ONt69zl5LA1H8fRa4csudYHFlrk5ktkwhx83Ds",
+          "mode": "list",
+          "cachedResultName": "FX Rates",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oijh3ONt69zl5LA1H8fRa4csudYHFlrk5ktkwhx83Ds/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oijh3ONt69zl5LA1H8fRa4csudYHFlrk5ktkwhx83Ds/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $json.date }}",
+            "base": "={{ $json.base }}",
+            "MYR": "={{ $json.rates.MYR }}",
+            "IDR": "={{ $json.rates.IDR }}",
+            "SGD": "={{ $json.rates.SGD }}",
+            "logged_at": "={{ $json.logged_at }}",
+            "rates": "={{ $json.rates }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "base",
+              "displayName": "base",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "MYR",
+              "displayName": "MYR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "IDR",
+              "displayName": "IDR",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SGD",
+              "displayName": "SGD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "logged_at",
+              "displayName": "logged_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rates",
+              "displayName": "rates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "id": "9d379718-0b6f-4b14-872d-e6bc73adbc95",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SX82rl1X3Ok5Lg0s",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kuala_Lumpur",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "dd35ad5a-d178-4434-9ba2-66b5ba88c977",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "AdoT8lE0G3ambEq7",
+  "tags": []
+}
