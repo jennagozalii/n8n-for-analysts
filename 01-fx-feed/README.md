@@ -6,7 +6,7 @@ Finance teams often copy exchange rates into a spreadsheet by hand every morning
 
 **Nodes used:** Schedule Trigger → HTTP Request → Edit Fields → Google Sheets
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-1-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/UXFZFvYl9rk?si=KFo07FLVc2gMdELp)
 
 ## Setup
 1. Import `01-fx-feed.json` into n8n.
