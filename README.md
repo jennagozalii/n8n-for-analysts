@@ -2,14 +2,14 @@
 
 This repo has the workflow files from my YouTube series **n8n for Analysts**, where I build practical automations for real data and business work: reporting, data cleaning, internal tools and AI workflows. Each video solves a problem I've seen teams deal with every day.
 
-▶️ **YouTube playlist:** [n8n for Analysts](PLAYLIST-LINK)
+▶️ **YouTube playlist:** [n8n for Analysts](https://youtube.com/playlist?list=PLBLnpl79rWi8&si=ozf1pB5E3uf7jMJH)
 💼 **LinkedIn:** [linkedin.com/in/jennagozali](https://www.linkedin.com/in/jennagozali)
 
 ## The series
 
 | # | Video | What it automates | Files |
 |---|-------|-------------------|-------|
-| 1 | [Daily FX Rates Feed](VIDEO-1-LINK) | Saves the latest USD exchange rates to Google Sheets every morning | [01-fx-feed](./01-fx-feed) |
+| 1 | [Daily FX Rates Feed](https://youtu.be/UXFZFvYl9rk?si=RSIkbhNCR1rA7e28) | Saves the latest USD exchange rates to Google Sheets every morning | [01-fx-feed](./01-fx-feed) |
 | 2 | Daily KPI Report by Email | Emails managers a formatted sales summary every weekday | Coming soon |
 | 3 | Complaint Intake with Escalation | Logs customer complaints and alerts the team on urgent ones | Coming soon |
 | 4 | AI Inbox Triage | Uses AI to sort and label support emails | Coming soon |
