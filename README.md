@@ -1,2 +1,30 @@
-# n8n-for-analysts
-Workflow files from my YouTube series "n8n for Analysts": practical n8n automations for data and business work.
+# n8n for Analysts
+
+This repo has the workflow files from my YouTube series **n8n for Analysts**, where I build practical automations for real data and business work: reporting, data cleaning, internal tools and AI workflows. Each video solves a problem I've seen teams deal with every day.
+
+▶️ **YouTube playlist:** [n8n for Analysts](PLAYLIST-LINK)
+💼 **LinkedIn:** [linkedin.com/in/jennagozali](https://www.linkedin.com/in/jennagozali)
+
+## The series
+
+| # | Video | What it automates | Files |
+|---|-------|-------------------|-------|
+| 1 | [Daily FX Rates Feed](VIDEO-1-LINK) | Saves the latest USD exchange rates to Google Sheets every morning | [01-fx-feed](./01-fx-feed) |
+| 2 | Daily KPI Report by Email | Emails managers a formatted sales summary every weekday | Coming soon |
+| 3 | Complaint Intake with Escalation | Logs customer complaints and alerts the team on urgent ones | Coming soon |
+| 4 | AI Inbox Triage | Uses AI to sort and label support emails | Coming soon |
+| 5 | Claims Data Cleaning | Cleans messy claims data and flags suspicious claims | Coming soon |
+| 6 | Internal API with Error Alerts | A secure claim-status API, plus Slack alerts when a workflow fails | Coming soon |
+| 7 | AI Weekly Analytics Summary | Calculates weekly results and has AI write the summary email | Coming soon |
+| 8 | AI Invoice Processing | Reads invoice PDFs and sends large ones for manager approval in Slack | Coming soon |
+
+## How to use these workflows
+
+1. Open the folder for the video you want and download the `.json` file.
+2. In n8n, create a new workflow, click **⋯** at the top, then **Import → From File**, and choose the file.
+3. Connect your own accounts (Google, Slack, etc.). Credentials are not included in these files.
+4. Each folder's README explains the sample data and setup.
+
+## Tools used
+
+n8n · Google Sheets · Gmail · Slack · Google Gemini · JavaScript
