@@ -1,0 +1,151 @@
+{
+  "name": "Daily KPI Email",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=30 8 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d80e6294-6398-43b0-9310-cdb5ded049de",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yJg1GLIhaYrl9lP3F1qLVI32Hr0OIzdIi1A1t5hGrf8",
+          "mode": "list",
+          "cachedResultName": "Daily Policy Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yJg1GLIhaYrl9lP3F1qLVI32Hr0OIzdIi1A1t5hGrf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yJg1GLIhaYrl9lP3F1qLVI32Hr0OIzdIi1A1t5hGrf8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b31008ed-29e7-4cf9-b2a9-c5132a30ff27",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SX82rl1X3Ok5Lg0s",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(item => item.json);\nconst latest = rows.map(r => r.date).sort().pop();\nconst day = rows.filter(r => r.date === latest);\nconst sum = key => day.reduce((s, r) => s + Number(r[key]), 0);\nconst totalPremium = sum('premium_myr');\nconst totalPolicies = sum('policies_sold');\nconst totalTarget = sum('target_myr');\nconst pct = ((totalPremium / totalTarget) * 100).toFixed(1);\nconst rowsHtml = day.map(r => {\nconst hit = Math.round((r.premium_myr / r.target_myr) * 100);\nconst color = hit < 80 ? '#c0392b' : '#222';\nreturn `<tr><td>${r.channel}</td><td>${r.policies_sold}</td>` +\n`<td>RM ${Number(r.premium_myr).toLocaleString()}</td>` +\n`<td style=\"color:${color}\">${hit}%</td></tr>`;\n}).join('');\nreturn [{ json: { date: latest, totalPremium, totalPolicies, pct, rowsHtml } \n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "3cdb1dd8-b316-4ed9-8b80-fa43ecdb589f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "you@example.com",
+        "subject": "=Daily Sales KPI  {{ $json.date }}",
+        "message": "=<h2>Daily Sales KPI – {{ $json.date }}</h2> \n<p><b>RM {{ $json.totalPremium.toLocaleString() }}</b> premium from {{  $json.totalPolicies }} policies ({{ $json.pct }}% of target).</p> \n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"> \n<tr><th>Channel</th><th>Policies</th><th>Premium</th><th>% of target</th> </tr> \n{{ $json.rowsHtml }} \n</table>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "81f75bf7-ae6d-4f52-b181-21e99a59cdb3",
+      "name": "Send a message",
+      "webhookId": "39602024-5952-485b-81b0-edef155bd4d1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "phPRS4LVRpJvYEcp",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kuala_Lumpur",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "redactCallerExecutions": true
+  },
+  "versionId": "134db027-c279-48b5-8b3c-c1dc16de50f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "UnTY9UPf3Vwlb4nC",
+  "tags": []
+}
