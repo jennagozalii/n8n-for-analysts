@@ -1,0 +1,417 @@
+{
+  "name": "Claim Complaints Form",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Customer Complaint",
+        "formDescription": "Tell us what went wrong. We reply within 2 working days.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Policy Number"
+            },
+            {
+              "fieldLabel": "Category",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Claim delay"
+                  },
+                  {
+                    "option": "Billing"
+                  },
+                  {
+                    "option": "Agent conduct"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Urgency",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Low"
+                  },
+                  {
+                    "option": "Medium"
+                  },
+                  {
+                    "option": "High"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Details",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3d3ac63a-8e54-4c60-8340-8d0b3101feb1",
+      "name": "On form submission",
+      "webhookId": "bd6ff1be-394a-49e6-b3df-638dbd57ceac"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e068b667-a90d-4b52-8c84-66ba1664a1d8",
+              "name": "ticket_id",
+              "value": "=CMP-{{ $now.toFormat('yyyyMMdd-HHmmss') }}",
+              "type": "string"
+            },
+            {
+              "id": "badec5b7-a1fa-443a-bdf4-b0ea24b2ae3f",
+              "name": "received_at",
+              "value": "={{$now.toISO()}}",
+              "type": "string"
+            },
+            {
+              "id": "9ec845f9-f9c9-47bc-a231-64122cd2ce63",
+              "name": "name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "46b73010-8bb0-4f64-a9b6-c1bd4c580ec4",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "5e90dd0a-eda0-4b49-948f-4f667cc1ad67",
+              "name": "policy_no",
+              "value": "={{ $json['Policy Number'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4df972e5-fc6f-4007-8211-b9da59b8774c",
+              "name": "category",
+              "value": "={{ $json.Category.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "b5a90606-a8e9-4e0c-ad86-e37224ce4444",
+              "name": "urgency",
+              "value": "={{ $json.Urgency.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "555fd566-c404-434b-b9c2-a5623649238d",
+              "name": "details",
+              "value": "={{ $json.Details }}",
+              "type": "string"
+            },
+            {
+              "id": "22b7cb26-6908-4532-9655-4d3ba8508b0d",
+              "name": "status",
+              "value": "New",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "bb04f619-1c13-48cc-aa5f-b95d8ec46885",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1V38l2CRaA-3P_p1gJOF8UpWHux4y_YwHuA5R3Ke1RjY",
+          "mode": "list",
+          "cachedResultName": "Complaints Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V38l2CRaA-3P_p1gJOF8UpWHux4y_YwHuA5R3Ke1RjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V38l2CRaA-3P_p1gJOF8UpWHux4y_YwHuA5R3Ke1RjY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "policy_no",
+              "displayName": "policy_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "urgency",
+              "displayName": "urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "76235001-cfba-44e6-bee8-cf76ad59bb2d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SX82rl1X3Ok5Lg0s",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "bb6f5371-ebdd-406a-b132-dce17e5aff6a",
+              "leftValue": "={{ $('Edit Fields').item.json.urgency }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "247c8cb4-946a-4cb4-ba80-0dc9e7ffe154",
+              "leftValue": "={{ $('Edit Fields').item.json.category }}",
+              "rightValue": "Agent conduct",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e65cda17-18b3-45ee-9b72-f541f250e4f5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CE04XPUJG",
+          "mode": "list",
+          "cachedResultName": "complaints-urgent"
+        },
+        "text": "=:rotating_light: Urgent complaint {{ $('Edit Fields').item.json.ticket_id }}\nCategory: {{ $('Edit Fields').item.json.category }} | Urgency: {{ $('Edit Fields').item.json.urgency }}\nPolicy: {{ $('Edit Fields').item.json.policy_no }}\n\"{{ $('Edit Fields').item.json.details.slice(0, 200) }}\"",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "1f1bd89a-85aa-49a5-9c71-af61ff78b94a",
+      "name": "Send a message",
+      "webhookId": "ea2557bc-bca6-4aa5-a05b-ae82892c25ed",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "J4yHVpkeWiquPSK3",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "3f5449be-9448-4db5-b0c7-0958f540a6e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "wcpFBFBOqXimajeW",
+  "tags": []
+}
