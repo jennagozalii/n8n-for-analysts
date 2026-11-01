@@ -11,7 +11,7 @@ This repo has the workflow files from my YouTube series **n8n for Analysts**, wh
 |---|-------|-------------------|-------|
 | 1 | [Daily FX Rates Feed](https://youtu.be/UXFZFvYl9rk?si=RSIkbhNCR1rA7e28) | Saves the latest USD exchange rates to Google Sheets every morning | [01-fx-feed](./01-fx-feed) |
 | 2 | [Daily KPI Report by Email](https://youtu.be/8idacZnWaAo?si=QWfHtzJxLbe0Tiq7) | Emails managers a formatted sales summary every weekday | [02-kpi-email](./02-kpi-email) |
-| 3 | Complaint Intake with Escalation | Logs customer complaints and alerts the team on urgent ones | Coming soon |
+| 3 | [Complaint Intake with Escalation](VIDEO-3-LINK) | Logs customer complaints and alerts the team on urgent ones | [03-complaint-intake](./03-complaint-intake) |
 | 4 | AI Inbox Triage | Uses AI to sort and label support emails | Coming soon |
 | 5 | Claims Data Cleaning | Cleans messy claims data and flags suspicious claims | Coming soon |
 | 6 | Internal API with Error Alerts | A secure claim-status API, plus Slack alerts when a workflow fails | Coming soon |
