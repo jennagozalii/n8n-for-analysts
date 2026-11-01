@@ -6,7 +6,7 @@ When complaints land in a shared inbox, urgent ones can sit unread for days. Thi
 
 **Nodes used:** n8n Form Trigger → Edit Fields → Google Sheets → IF → Slack
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-3-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/BiQmFAlyX4c?si=JYoAUs_kApyEr-us)
 
 ## Setup
 1. Import `03-complaint-intake.json` into n8n.
