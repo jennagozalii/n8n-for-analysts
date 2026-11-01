@@ -6,7 +6,7 @@ In many teams, someone builds the daily numbers email by hand every morning. Thi
 
 **Nodes used:** Schedule Trigger → Google Sheets → Code (JavaScript) → Gmail
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-2-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/8idacZnWaAo?si=QWfHtzJxLbe0Tiq7)
 
 ## Setup
 1. Import `02-kpi-email.json` into n8n.
