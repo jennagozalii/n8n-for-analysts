@@ -1,0 +1,330 @@
+{
+  "name": "AI Inbox Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "396ed51c-680f-40b9-a60b-280cd5796e0a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject : {{ $json.subject }}\n\n{{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Claims",
+              "description": "Questions or updates about an insurance claim, claim status, or claim documents."
+            },
+            {
+              "category": "Billing",
+              "description": "Premiums, payments, refunds, double charges, or invoices."
+            },
+            {
+              "category": "Policy Change",
+              "description": "Requests to update personal details, address, beneficiaries, or coverage on an exisiting policy."
+            },
+            {
+              "category": "Complaint",
+              "description": "Unhappiness with service, staff, or agents, or a formal complaint."
+            },
+            {
+              "category": "Other",
+              "description": "Anything that does not clearly fit the categories above."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "861fa68b-0da3-4bb0-8e8a-938179283ff2",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        208
+      ],
+      "id": "633e8c7f-f3f3-4a53-adcb-a3ac71e5f631",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dXqXu2bTaNYEAwmp",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_7184726696221772622"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        -160
+      ],
+      "id": "2000086a-189e-4275-8d0c-0f27ff03da6e",
+      "name": "Label Claims",
+      "webhookId": "c1840d47-8541-42d2-a55d-eaf9d9f662be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6295484446977921139"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        32
+      ],
+      "id": "7759cdaa-b228-4495-955b-721ca18886a4",
+      "name": "Label Billing",
+      "webhookId": "c1840d47-8541-42d2-a55d-eaf9d9f662be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_230116174127201439"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        224
+      ],
+      "id": "867cabce-22a1-4494-aebe-d36c3d0277a5",
+      "name": "Label Policy Change",
+      "webhookId": "c1840d47-8541-42d2-a55d-eaf9d9f662be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_5505495114229603660"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        400
+      ],
+      "id": "56998e3c-407e-4480-be20-e47a54a93d7f",
+      "name": "Label Complaint",
+      "webhookId": "c1840d47-8541-42d2-a55d-eaf9d9f662be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_5063941207115686334"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        544
+      ],
+      "id": "e1afdaa7-3700-4b39-8e04-43f6387d81be",
+      "name": "Label Other",
+      "webhookId": "c1840d47-8541-42d2-a55d-eaf9d9f662be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CEZH3NQF2",
+          "mode": "list",
+          "cachedResultName": "complaints-urgent"
+        },
+        "text": "=:warning: New complaint email\nFrom: {{ $('Gmail Trigger').item.json.from.text }}\nSubject: {{ $('Gmail Trigger').item.json.subject }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        816,
+        400
+      ],
+      "id": "36b43876-ad50-48a5-b55d-045a9095dcae",
+      "name": "Send a message",
+      "webhookId": "047142fe-0aef-47ec-b7b9-ab611edf8299",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "5aJEC4ar2BVyVHGy",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Label Claims",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Policy Change",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Complaint",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Other",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Complaint": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "0ea69bdb-fdff-47f8-a01b-9bbf5bcd46a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "DvCvF78ZasaXtYrC",
+  "tags": []
+}
