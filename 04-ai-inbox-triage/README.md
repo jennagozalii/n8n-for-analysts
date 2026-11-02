@@ -6,7 +6,7 @@ Support teams often spend the first hour of the day just sorting emails. This wo
 
 **Nodes used:** Gmail Trigger → Text Classifier (with Google Gemini Chat Model) → Gmail (Add Label) → Slack
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-4-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/gLLuvihQBC4)
 
 ## Setup
 1. Use a **separate test Gmail account**. Please don't connect this to a real inbox until you've tested it.
