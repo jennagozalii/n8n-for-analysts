@@ -13,7 +13,7 @@ This repo has the workflow files from my YouTube series **n8n for Analysts**, wh
 | 2 | [Daily KPI Report by Email](https://youtu.be/8idacZnWaAo?si=QWfHtzJxLbe0Tiq7) | Emails managers a formatted sales summary every weekday | [02-kpi-email](./02-kpi-email) |
 | 3 | [Complaint Intake with Escalation](https://youtu.be/BiQmFAlyX4c?si=JYoAUs_kApyEr-us) | Logs customer complaints and alerts the team on urgent ones | [03-complaint-intake](./03-complaint-intake) |
 | 4 | [AI Inbox Triage](https://youtu.be/gLLuvihQBC4) | Uses AI to sort and label support emails | [04-ai-inbox-triage](./04-ai-inbox-triage) |
-| 5 | Claims Data Cleaning | Cleans messy claims data and flags suspicious claims | Coming soon |
+| 5 | [Clean and Flag Claims Data](VIDEO-5-LINK) | Cleans messy claims data and flags suspicious claims | [05-claims-cleaning](./05-claims-cleaning) |
 | 6 | Internal API with Error Alerts | A secure claim-status API, plus Slack alerts when a workflow fails | Coming soon |
 | 7 | AI Weekly Analytics Summary | Calculates weekly results and has AI write the summary email | Coming soon |
 | 8 | AI Invoice Processing | Reads invoice PDFs and sends large ones for manager approval in Slack | Coming soon |
