@@ -1,5 +1,5 @@
 # n8n for Analysts
-
+![AI invoice processing workflow](08-invoice-processing-workflow.PNG)
 This repo has the workflow files from my YouTube series **n8n for Analysts**, where I build practical automations for real data and business work: reporting, data cleaning, internal tools and AI workflows. Each video solves a problem I've seen teams deal with every day.
 
 ▶️ **YouTube playlist:** [n8n for Analysts](https://youtube.com/playlist?list=PLBLnpl79rWi8&si=ozf1pB5E3uf7jMJH)
