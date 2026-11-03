@@ -1,0 +1,207 @@
+{
+  "name": "AI Weekly Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "be6dc8a9-bd84-4c17-af4a-ffbd1110771f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TSOpedte_BEHyIrWn4rx6a-1137_Ok4OFNQ_iAaFAhk",
+          "mode": "list",
+          "cachedResultName": "Daily Policy Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TSOpedte_BEHyIrWn4rx6a-1137_Ok4OFNQ_iAaFAhk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TSOpedte_BEHyIrWn4rx6a-1137_Ok4OFNQ_iAaFAhk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e3fa0f12-21c6-40da-a155-5c43eb4b3231",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst weekOf = d => DateTime.fromISO(d).startOf('week').toISODate();\nconst weeks = [...new Set(rows.map(r => weekOf(r.date)))].sort();\nconst thisWeek = weeks[weeks.length - 1];\nconst lastWeek = weeks[weeks.length - 2];\nconst channels = [...new Set(rows.map(r => r.channel))];\n\nconst total = (ch, wk, key) => rows\n.filter(r => r.channel === ch && weekOf(r.date) === wk)\n.reduce((s, r) => s + Number(r[key]), 0);\n\nconst summary = channels.map(ch => {\nconst now = total(ch, thisWeek, 'premium_myr');\nconst prev = total(ch, lastWeek, 'premium_myr');\nconst target = total(ch, thisWeek, 'target_myr');\nreturn {\nchannel: ch,\npremium_this_week: now,\npremium_last_week: prev,\nchange_pct: prev ? Number(((now - prev) / prev * 100).toFixed(1)) : null,\npct_of_target: Number((now / target * 100).toFixed(1))\n\n  };\n});\nreturn [{ json: { week_starting: thisWeek, summary } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "1ef9a4c8-316a-4467-86c2-7839c849135a",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a business analyst writing a weekly update for busy sales managers at an insurance company.\nHere is this week's data by channel (premium in MYR, week starting {{ \n$json.week_starting }}):\n{{ JSON.stringify($json.summary) }}\n\nRules:\n- Use ONLY the numbers above. Do not calculate new figures or invent any \ndata.\n- Write a one-sentence headline.\n- Then at most 3 bullet points with the most important findings.\n- Then one suggested action.\n- Plain, confident business English. No hype words.\n- Return simple HTML only: <h3>, <ul>, <li>, <p>. No markdown, no code fences.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        0
+      ],
+      "id": "84ac10b4-5457-4e5f-8afa-e9c4273cd483",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        208
+      ],
+      "id": "0fa8dbf1-e3ba-45ce-b93b-9b2497f49463",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dXqXu2bTaNYEAwmp",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "jenna.n8n.demo@gmail.com",
+        "subject": "= Weekly Sales Insight – week of {{ $('Code in JavaScript').item.json.week_starting }}",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "f33d95c5-28d6-419b-a080-b3ce94f5351b",
+      "name": "Send a message",
+      "webhookId": "8ebf7df7-94a8-4d16-8206-cc27591f7533",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kuala_Lumpur",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "redactCallerExecutions": true
+  },
+  "versionId": "f7d37590-e884-4876-b676-f39d10f28643",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "2EHOhkKpfqkBfZ8x",
+  "tags": []
+}
