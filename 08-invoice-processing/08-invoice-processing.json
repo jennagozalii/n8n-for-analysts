@@ -1,0 +1,495 @@
+{
+  "name": "Invoice Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "subject:invoice has:attachment",
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a2b72ca9-0ba4-495d-9103-febc728ecb7c",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "baGIm2aYXlEoCHwQ",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7daedb40-775d-4a52-8b54-43ea366735a2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "vendor_name",
+              "description": "The company that issued the invoice",
+              "required": true
+            },
+            {
+              "name": "invoice_number",
+              "description": "The invoice number",
+              "required": true
+            },
+            {
+              "name": "invoice_date",
+              "description": "Invoice date in YYYY-MM-DD format",
+              "required": true
+            },
+            {
+              "name": "due_date",
+              "description": "Due date in YYYY-MM-DD format",
+              "required": true
+            },
+            {
+              "name": "total_amount",
+              "description": "The final TOTAL including tax, digits only, not the subtotal",
+              "required": true
+            },
+            {
+              "name": "currency",
+              "description": "Three-letter currency code, for example MYR",
+              "required": true
+            },
+            {
+              "name": "description",
+              "description": "What was purchased, in under 10 words",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "58cc42ae-b282-4315-9f49-b378911d5fac",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        208
+      ],
+      "id": "73968ba3-b186-4d47-9449-e7961fb7c675",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dXqXu2bTaNYEAwmp",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "8741f96e-5c42-466b-ac36-3c1689764ff5",
+              "leftValue": "={{ $json.output.total_amount.toNumber() }}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        816,
+        0
+      ],
+      "id": "0a0125fb-c745-4672-b002-b9153101e645",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "sendAndWait",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CE2HGBTU7",
+          "mode": "list",
+          "cachedResultName": "approvals"
+        },
+        "message": "=Invoice approval needed\nVendor: {{ $json.output.vendor_name }}\nInvoice: {{ $json.output.invoice_number }}\nAmount: {{ $json.output.currency }} {{ $json.output.total_amount }}\nDue: {{ $json.output.due_date }}\nFor: {{ $json.output.description }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1040,
+        -192
+      ],
+      "id": "1364beb9-4677-48f1-8bd0-57ccee08da93",
+      "name": "Send message and wait for response",
+      "webhookId": "66060514-bbac-4473-ab87-854af0afcd89",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "5aJEC4ar2BVyVHGy",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a8a8e2b8-f993-46c5-b0ba-8ab2acb98809",
+              "name": "approval",
+              "value": "={{ $json.data.approved ? 'Approved' :\n'Declined' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "41fb5121-6952-41f2-a4ae-bc83e8cd1cf6",
+      "name": "Set Manager Decision"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1720693a-092b-4cd6-b059-591bc968053f",
+              "name": "approval",
+              "value": "Auto-approved",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1040,
+        96
+      ],
+      "id": "a8ecdcaa-2f66-4a3b-94f3-946d93a25147",
+      "name": "Set Auto-approved"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1U9wnVpbbJ0UODctplBAKYif30BNbE24pR75E7FewD4Y",
+          "mode": "list",
+          "cachedResultName": "Invoice Register",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U9wnVpbbJ0UODctplBAKYif30BNbE24pR75E7FewD4Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U9wnVpbbJ0UODctplBAKYif30BNbE24pR75E7FewD4Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "received_at": "={{ $now.toISO() }}",
+            "vendor_name": "={{ $('Information Extractor').item.json.output.vendor_name }}",
+            "invoice_number": "={{ $('Information Extractor').item.json.output.invoice_number }}",
+            "invoice_date": "={{ $('Information Extractor').item.json.output.invoice_date }}",
+            "due_date": "={{ $('Information Extractor').item.json.output.due_date }}",
+            "total_amount": "={{ $('Information Extractor').item.json.output.total_amount }}",
+            "currency": "={{ $('Information Extractor').item.json.output.currency }}",
+            "description": "={{ $('Information Extractor').item.json.output.description }}",
+            "approval": "={{ $json.approval }}",
+            "sender": "={{ $('Gmail Trigger').item.json.from.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vendor_name",
+              "displayName": "vendor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "invoice_number",
+              "displayName": "invoice_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "invoice_date",
+              "displayName": "invoice_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_amount",
+              "displayName": "total_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "currency",
+              "displayName": "currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "approval",
+              "displayName": "approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sender",
+              "displayName": "sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        -192
+      ],
+      "id": "eb9a2022-dd3e-49e4-9011-08eaae712a3a",
+      "name": "Save to Register",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Auto-approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Set Manager Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Manager Decision": {
+      "main": [
+        [
+          {
+            "node": "Save to Register",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Auto-approved": {
+      "main": [
+        [
+          {
+            "node": "Save to Register",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "e7f764a6-9ae7-42ea-8248-e14dad14f962",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "JrmoYGhsu6OGc6hN",
+  "tags": []
+}
