@@ -1,0 +1,412 @@
+{
+  "name": "Claims Cleaning",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4cf685d1-7154-43a0-b7c2-b4c5e17173d9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8",
+          "mode": "list",
+          "cachedResultName": "Claims Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Claims Raw",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "36c487a0-1b22-4d90-ae8c-02be6baf436a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const formats = ['yyyy-MM-dd', 'dd/MM/yyyy', 'd MMM yyyy', 'd/M/yyyy'];\nfunction parseDate(value) {\nconst s = String(value ?? '').trim();\nfor (const f of formats) {\nconst d = DateTime.fromFormat(s, f);\nif (d.isValid) return d.toISODate();\n}\nreturn null;\n}\nconst seen = new Set();\nconst out = [];\nfor (const item of $input.all()) {\nconst r = item.json;\nconst claimId = String(r.claim_id).trim().toUpperCase();\nconst duplicate = seen.has(claimId);\nseen.add(claimId);\nconst amount = Number(String(r.amount).replace(/[^0-9.]/g, ''));\nconst type = String(r.claim_type).trim().toLowerCase();\nconst claimType = type.charAt(0).toUpperCase() + type.slice(1);\nconst claimDate = parseDate(r.claim_date);\nconst policyStart = parseDate(r.policy_start);\nconst daysSinceStart = claimDate && policyStart\n? \nMath.round(DateTime.fromISO(claimDate).diff(DateTime.fromISO(policyStart), \n'days').days)\n: null;\n\nconst flags = [];\nif (duplicate) flags.push('Duplicate claim ID');\nif (!claimDate) flags.push('Invalid claim date');\nif (amount > 20000) flags.push('Amount above RM 20,000');\nif (daysSinceStart !== null && daysSinceStart < 30) flags.push('Claim within 30 days of policy start');\nout.push({ json: {\nclaim_id: claimId,\npolicy_no: String(r.policy_no).trim(),\nclaim_type: claimType,\nclaim_date: claimDate,\npolicy_start: policyStart,\namount_myr: amount,\ndays_since_start: daysSinceStart,\nflagged: flags.length > 0,\nflag_reasons: flags.join('; ')\n}});\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "3aaeeb65-f5ef-45ad-b721-ff575a44f2e9",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "f214ca65-ac1f-4dc1-961e-d41a5884e1de",
+              "leftValue": "={{ $json.flagged }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "620f51ab-e89c-4897-b2a0-190ee631c8bf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8",
+          "mode": "list",
+          "cachedResultName": "Claims Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1985950678,
+          "mode": "list",
+          "cachedResultName": "Claims Flagged",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit#gid=1985950678"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "claim_id",
+              "displayName": "claim_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "policy_no",
+              "displayName": "policy_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "claim_type",
+              "displayName": "claim_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "claim_date",
+              "displayName": "claim_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "policy_start",
+              "displayName": "policy_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount_myr",
+              "displayName": "amount_myr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "days_since_start",
+              "displayName": "days_since_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "flagged",
+              "displayName": "flagged",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "flag_reasons",
+              "displayName": "flag_reasons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        912,
+        -176
+      ],
+      "id": "f77a8a96-747d-4668-b8c5-f467ad6a2d73",
+      "name": "Save Flagged",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8",
+          "mode": "list",
+          "cachedResultName": "Claims Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 111355143,
+          "mode": "list",
+          "cachedResultName": "Claims Clean",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit#gid=111355143"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "claim_id",
+              "displayName": "claim_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "policy_no",
+              "displayName": "policy_no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "claim_type",
+              "displayName": "claim_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "claim_date",
+              "displayName": "claim_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "policy_start",
+              "displayName": "policy_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount_myr",
+              "displayName": "amount_myr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "days_since_start",
+              "displayName": "days_since_start",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "flagged",
+              "displayName": "flagged",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "flag_reasons",
+              "displayName": "flag_reasons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        96
+      ],
+      "id": "63661053-483a-4f7b-8ad2-de74d92f1d4e",
+      "name": "Save Clean",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Save Flagged",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Clean",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "c596f975-f6d7-4278-9976-d6bb13de9d22",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "mEFfv2WEuTATYAJm",
+  "tags": []
+}
