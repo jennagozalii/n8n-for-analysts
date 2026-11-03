@@ -1,0 +1,194 @@
+{
+  "name": "Claim Status API",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "claim-status",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3579b24b-51c4-41bc-8bb4-878bd70a7941",
+      "name": "Webhook",
+      "webhookId": "6856e0c8-a9e5-4a98-ac3f-d68bf86c7266",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HxlpsAlezoctdkQm",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8",
+          "mode": "list",
+          "cachedResultName": "Claims Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xHrcuF98gJspu6OcO0hJG8l58IWGot3W6maogzLcEv8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Claims Clean",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "claim_id",
+              "lookupValue": "={{ $json.query.claim_id.toUpperCase()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c28abafd-e6ef-474f-b3d8-1230d86ff50f",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UiPUIZySzE930sAR",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "5774b567-173a-42f4-84f6-5cefcbef344b",
+              "leftValue": "={{ $json.claim_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b47e4cc2-22d8-4f71-afd3-0b147dba4f9a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\"claim_id\": \"{{ $json.claim_id }}\",\n\"claim_type\": \"{{ $json.claim_type }}\",\n\"amount_myr\": {{ $json.amount_myr }},\n\"status\": \"{{ $json.status }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        656,
+        -208
+      ],
+      "id": "cec2c7b4-a3cd-448e-9cac-a3ff0b2f9099",
+      "name": "Respond Found"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"Claim not found\"\n}",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        96
+      ],
+      "id": "8a6e67c1-1d20-4272-8cc9-908dc19c7ed5",
+      "name": "Respond Not Found"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond Found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "v1HJo1A5S0U2ne70",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "077a1660-9150-49de-9690-8f7fb60a6a25",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e985cab8242e03d09a8af94387457c20c35de9722ac542a094b2f8b4e3285b9"
+  },
+  "nodeGroups": [],
+  "id": "hTbOIOxHTHHBMQeI",
+  "tags": []
+}
