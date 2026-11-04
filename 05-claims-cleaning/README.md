@@ -6,7 +6,7 @@ Data exports are rarely clean. Dates come in different formats, amounts are stor
 
 **Nodes used:** Manual Trigger → Google Sheets → Code (JavaScript) → IF → Google Sheets (×2)
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-5-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/YmfDuf1VEg0)
 
 ## Flag rules
 A claim is flagged if any of these are true:
