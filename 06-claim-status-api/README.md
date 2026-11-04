@@ -10,7 +10,7 @@ Analysts often get the same question again and again: "Can you check the status 
 - API: Webhook (Header Auth) → Google Sheets → IF → Respond to Webhook (×2)
 - Alerts: Error Trigger → Slack
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-6-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/WNhj4KL55cU)
 
 ## Setup
 1. Use the **Claims Clean** tab from project 05, and add a `status` column (for example Approved, In review, Paid).
