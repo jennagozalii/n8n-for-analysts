@@ -13,7 +13,7 @@ This repo has the workflow files from my YouTube series **n8n for Analysts**, wh
 | 2 | [Daily KPI Report by Email](https://youtu.be/8idacZnWaAo?si=QWfHtzJxLbe0Tiq7) | Emails managers a formatted sales summary every weekday | [02-kpi-email](./02-kpi-email) |
 | 3 | [Complaint Intake with Escalation](https://youtu.be/BiQmFAlyX4c?si=JYoAUs_kApyEr-us) | Logs customer complaints and alerts the team on urgent ones | [03-complaint-intake](./03-complaint-intake) |
 | 4 | [AI Inbox Triage](https://youtu.be/gLLuvihQBC4) | Uses AI to sort and label support emails | [04-ai-inbox-triage](./04-ai-inbox-triage) |
-| 5 | [Clean and Flag Claims Data](VIDEO-5-LINK) | Cleans messy claims data and flags suspicious claims | [05-claims-cleaning](./05-claims-cleaning) |
+| 5 | [Clean and Flag Claims Data](https://youtu.be/YmfDuf1VEg0) | Cleans messy claims data and flags suspicious claims | [05-claims-cleaning](./05-claims-cleaning) |
 | 6 | [Internal API with Error Alerts](VIDEO-6-LINK) | A secure claim-status API, plus Slack alerts when a workflow fails | [06-claim-status-api](./06-claim-status-api) |
 | 7 | [AI Weekly Analytics Summary](VIDEO-7-LINK) | Calculates weekly results and has AI write the summary email | [07-ai-weekly-summary](./07-ai-weekly-summary) |
 | 8 | [AI Invoice Processing with Approval](VIDEO-8-LINK) | Reads invoice PDFs and sends large ones for manager approval in Slack | [08-invoice-processing](./08-invoice-processing) |
