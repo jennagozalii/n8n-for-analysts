@@ -6,7 +6,7 @@ Sending numbers is easy. Explaining what they mean is what takes time every Mond
 
 **Nodes used:** Schedule Trigger → Google Sheets → Code (JavaScript) → Basic LLM Chain (with Google Gemini Chat Model) → Gmail
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-7-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/_X9IF3_owcM)
 
 ## Why code does the maths
 Language models can make arithmetic mistakes, and one wrong number in a report is enough to lose a manager's trust. So every figure is calculated in the Code node first. The AI only receives the final results, and the prompt tells it not to calculate or invent anything.
