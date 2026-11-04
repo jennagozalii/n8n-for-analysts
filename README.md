@@ -15,7 +15,7 @@ This repo has the workflow files from my YouTube series **n8n for Analysts**, wh
 | 4 | [AI Inbox Triage](https://youtu.be/gLLuvihQBC4) | Uses AI to sort and label support emails | [04-ai-inbox-triage](./04-ai-inbox-triage) |
 | 5 | [Clean and Flag Claims Data](https://youtu.be/YmfDuf1VEg0) | Cleans messy claims data and flags suspicious claims | [05-claims-cleaning](./05-claims-cleaning) |
 | 6 | [Internal API with Error Alerts](https://youtu.be/WNhj4KL55cU) | A secure claim-status API, plus Slack alerts when a workflow fails | [06-claim-status-api](./06-claim-status-api) |
-| 7 | [AI Weekly Analytics Summary](VIDEO-7-LINK) | Calculates weekly results and has AI write the summary email | [07-ai-weekly-summary](./07-ai-weekly-summary) |
+| 7 | [AI Weekly Analytics Summary](https://youtu.be/_X9IF3_owcM) | Calculates weekly results and has AI write the summary email | [07-ai-weekly-summary](./07-ai-weekly-summary) |
 | 8 | [AI Invoice Processing with Approval](VIDEO-8-LINK) | Reads invoice PDFs and sends large ones for manager approval in Slack | [08-invoice-processing](./08-invoice-processing) |
 
 ## How to use these workflows
