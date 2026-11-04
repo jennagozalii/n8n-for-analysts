@@ -10,7 +10,7 @@ In many finance teams, someone opens every invoice PDF, types the details into a
 
 **Nodes used:** Gmail Trigger → Extract from File → Information Extractor (with Google Gemini Chat Model) → IF → Slack (Send and Wait for Response) → Edit Fields → Google Sheets
 
-▶️ **Watch the tutorial:** [YouTube](VIDEO-8-LINK)
+▶️ **Watch the tutorial:** [YouTube](https://youtu.be/gVLNtUH_wvs)
 
 ## Sample invoices
 | File | Vendor | Total | Expected result |
